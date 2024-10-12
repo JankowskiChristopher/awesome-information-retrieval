@@ -37,7 +37,7 @@ To set up and run the project locally, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/jankowskichristopher/information-retrieval-playground.git
+   git clone https://github.com/jankowskichristopher/awesome-information-retrieval.git
    cd information-retrieval-playground
    ```
 
