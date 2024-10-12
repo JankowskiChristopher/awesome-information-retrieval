@@ -4,7 +4,7 @@
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
-Created by: Krzysztof Jankowski, Michał Janik, Michał Grotkowski, Antoni Hanke
+Created by: [Krzysztof Jankowski](https://github.com/jankowskichristopher), Michał Janik, Michał Grotkowski, Antoni Hanke
 ### About
 The repository contains code developed for experimentation with information retrieval and question answering systems.
 By combining various retrievers, rerankers and other techniques we conduct an in depth analysis on how to achieve the most performant pipelines.
@@ -38,7 +38,7 @@ To set up and run the project locally, follow these steps:
 1. Clone the repository:
    ```
    git clone https://github.com/jankowskichristopher/awesome-information-retrieval.git
-   cd information-retrieval-playground
+   cd awesome-information-retrieval
    ```
 
 2. Create and activate a virtual environment:
