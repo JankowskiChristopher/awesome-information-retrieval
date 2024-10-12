@@ -1,0 +1,139 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  # Job name
+  name: ${JOB_NAME}
+spec:
+  # Specify how many times a pod should be restarted in case of failure
+  backoffLimit: 3
+  template:
+    spec:
+      securityContext:
+        fsGroup: 65533
+      restartPolicy: Never
+      priorityClassName: ${JOB_PRIORITY}
+      containers:
+        # Here go all containers that run within this pod
+        - name: ${CONTAINER_NAME}
+          # Required docker image
+          image: huggingface/transformers-pytorch-gpu:4.35.2          # Here you can put your command
+          command: 
+           - "/bin/bash"
+          args: 
+           - -c  
+           - |
+             export HYDRA_FULL_ERROR=1 &&
+             export WANDB_API_KEY=${WANDB_API_KEY} &&
+             export WANDB_NAME=${WANDB_PROJECT_NAME} &&
+             export WANDB_NOTES=${WANDB_NOTES} &&
+             export WANDB_ENTITY=${WANDB_ENTITY} &&
+             export WANDB_GROUP=${WANDB_GROUP} &&
+             export PYTORCH_KERNEL_CACHE_PATH=/tmp/ &&
+             export PYTHONUSERBASE=/tmp/packages &&
+             export PYTHONPATH=$PYTHONPATH:/repo/awesome-information-retrieval &&
+             export HF_HOME=/repo/hf/misc &&
+             export HF_DATASETS_CACHE=/repo/hf/datasets &&
+             export TRANSFORMERS_CACHE=/repo/hf/models &&
+             mkdir -p /tmp/.config/wandb &&
+             cd /repo/awesome-information-retrieval &&
+             python3 -m pip install --upgrade pip &&
+             pip install --user -r requirements.txt &&
+             sleep 30 &&
+             python3 -u ${PYTHON_SCRIPT_PATH} ${PYTHON_PARAMS}
+          # This security context is required in every pod to pass K8s security checks
+          resources:
+            requests:
+              ephemeral-storage: "4Gi"  # "32Gi" for running BM25
+              cpu: "1"  # "4" for running BM25
+              memory: "4Gi" # "100Gi" for running BM25
+            limits:
+              ephemeral-storage: "32Gi"  # "64Gi" for running BM25
+              cpu: "8"  # "16" for running BM25
+              memory: "32Gi"  # "200Gi" for running BM25
+
+          securityContext:
+            # Set to your container user's UID and GID
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            # Mount for persistent storage, will be available at /nas
+            - name: nas
+              mountPath: "/nas"
+            - name: repo
+              mountPath: "/repo"
+      # New Elasticsearch container configuration
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+          env:
+            - name: "discovery.type"
+              value: "single-node"
+            - name: "ES_JAVA_OPTS"
+              value: "-Xms8g -Xmx8g"
+            - name: "xpack.security.enabled"
+              value: "false"
+          ports:
+            - containerPort: 9200
+              protocol: TCP
+            - containerPort: 9300
+              protocol: TCP
+          resources:
+            requests:
+              memory: "12Gi"
+              cpu: "1"
+            limits:
+              memory: "24Gi"
+              cpu: "2"
+          securityContext:
+            # Set to your container user's UID and GID
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: nas
+              mountPath: "/var/lib/elasticsearch/data"
+              subPath: "llm_domain_adaptation/elasticsearch/data"
+      initContainers:
+        - name: git-sync
+          image: registry.k8s.io/git-sync/git-sync:v4.1.0
+          args:
+            - "--repo=git@github.com:JankowskiChristopher/awesome-information-retrieval"
+            - "--one-time"
+            - "--root=/repo"
+            - "--ref=${GIT_BRANCH}"
+          volumeMounts:
+            - name: repo
+              mountPath: "/repo"
+            - name: git-secret
+              mountPath: "/etc/git-secret"
+              readOnly: true
+          securityContext:
+            # Set to your container user's UID and GID
+            runAsUser: 65533
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: nas
+          persistentVolumeClaim:
+            claimName: nas
+        - name: repo 
+          emptyDir: {}
+        - name: git-secret 
+          secret:
+            secretName: git-creds
+            defaultMode: 0400
+    

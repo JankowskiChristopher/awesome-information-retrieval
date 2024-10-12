@@ -1,0 +1,16 @@
+_target_: src.retrievers.snowflake_retriever.ArcticEmbedRetriever
+model_identifier: "Snowflake/snowflake-arctic-embed-m"
+tokenizer_path_or_name: "Snowflake/snowflake-arctic-embed-m"
+context_embedding_model_path_or_name: "Snowflake/snowflake-arctic-embed-m"
+query_embedding_model_path_or_name: "Snowflake/snowflake-arctic-embed-m"
+batch_size_passages: 32  # change depending on the GPU, later introduce "automatic"
+batch_size_queries: 128
+batch_size_retrieval: 1000
+query_instruction: "Represent this sentence for searching relevant passages:"
+context_instruction: null
+should_normalize_embeddings: true  # important, arctic-embed uses embedding l2 normalization!
+local: false
+embedding_column: "embeddings"
+should_use_cached_results: true
+should_cache_results: true
+should_override_cache_with_less_docs: false

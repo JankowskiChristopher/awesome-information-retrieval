@@ -1,0 +1,108 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  # Job name
+  name: ${JOB_NAME}
+spec:
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: gpu
+                    operator: In
+                    values:
+                      - ${GPU_MODEL}
+      securityContext:
+        fsGroup: 65533
+      restartPolicy: Never
+      priorityClassName: ${JOB_PRIORITY}
+      containers:
+        - name: ${CONTAINER_NAME}
+          image: mgrot/awesome-information-retrieval:latest
+          # Later we will probably delete HYDRA_FULL_ERROR=1, but for now it helps in debugging.
+          command:
+           - "/bin/bash"
+          args:
+           - -c
+           - | 
+              export HYDRA_FULL_ERROR=1 &&
+              export WANDB_API_KEY=${WANDB_API_KEY} && 
+              export WANDB_NAME=${WANDB_PROJECT_NAME} && 
+              export WANDB_NOTES=${WANDB_NOTES} &&
+              export WANDB_ENTITY=${WANDB_ENTITY} &&
+              export WANDB_GROUP=${WANDB_GROUP} &&
+              export PYTORCH_KERNEL_CACHE_PATH=/tmp/ &&
+              export PYTHONUSERBASE=/tmp/packages && 
+              export PYTHONPATH=$PYTHONPATH:/repo/awesome-information-retrieval &&
+              export HF_HOME=/repo/hf/misc &&
+              export HF_DATASETS_CACHE=/repo/hf/datasets &&
+              export TRANSFORMERS_CACHE=/repo/hf/models &&
+              export DSP_CACHEDIR=/tmp/dsp_cache && 
+              mkdir -p /tmp/.config/wandb &&
+              cd /repo/awesome-information-retrieval && 
+              python3 -u ${PYTHON_SCRIPT_PATH} ${PYTHON_PARAMS}
+ #         set your resource requirements
+          resources:
+            requests:
+              ephemeral-storage: "32Gi"
+              cpu: "1"
+              memory: "32Gi"
+              nvidia.com/gpu: "1"
+            limits:
+              ephemeral-storage: "32Gi"
+              cpu: "8"
+              memory: "64Gi"
+              nvidia.com/gpu: "1"
+
+          securityContext:
+             runAsUser: 65533
+             runAsGroup: 65533
+             runAsNonRoot: true
+             allowPrivilegeEscalation: false
+             capabilities:
+               drop: ["ALL"]
+             seccompProfile:
+               type: RuntimeDefault
+
+          volumeMounts:
+            - name: nas
+              mountPath: "/nas"
+            - name: repo
+              mountPath: "/repo"
+      imagePullSecrets:
+        - name: regcred
+      initContainers:
+        - name: git-sync
+          image: registry.k8s.io/git-sync/git-sync:v4.1.0
+          args:
+            - "--repo=git@github.com:JankowskiChristopher/awesome-information-retrieval"
+            - "--one-time"
+            - "--root=/repo"
+            - "--ref=${GIT_BRANCH}"
+          volumeMounts:
+            - name: repo
+              mountPath: "/repo"
+            - name: git-secret
+              mountPath: "/etc/git-secret"
+              readOnly: true
+          securityContext:
+            runAsUser: 65533
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: nas
+          persistentVolumeClaim:
+            claimName: nas
+        - name: repo
+          emptyDir: {}
+        - name: git-secret
+          secret:
+            secretName: git-creds
+            defaultMode: 0400

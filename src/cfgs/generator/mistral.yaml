@@ -1,0 +1,9 @@
+_target_: src.generators.llm_generator.LLMGenerator
+batch_size: 20 # change depending on the GPU, later introduce "automatic"
+tokenizer_name: "mistralai/Mistral-7B-Instruct-v0.2"
+model_name: "mistralai/Mistral-7B-Instruct-v0.2" # "test_mistral_small" for local debugging if present locally
+tokenizer_args: {"padding" : true, "return_tensors" : "pt"} # arguments to tokenizer's batch_encode() method, these two are needed
+#tokenizer_args: {"padding" : 'max_length', "max_length": 8192, "truncation": true, "return_tensors" : "pt"} # example how to truncate
+generate_args: {"max_new_tokens" : 12, "do_sample" : true} # arguments to HF generate() method, change them to do more sophisticated generation like beam-search
+local: false
+device: "cuda"

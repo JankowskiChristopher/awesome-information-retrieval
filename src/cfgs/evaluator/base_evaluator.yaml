@@ -1,0 +1,6 @@
+_target_: src.evaluation.hf_eval_modules.model_eval_pipeline.GenericModelQAEvalPipeline
+generator: ???
+question_string: null # string to put before question prompt 'question:' by default
+context_string: null # string to put before context prompt 'context:' by default
+question_first: false # whether to put question before context, false by default
+

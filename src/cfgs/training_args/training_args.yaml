@@ -1,0 +1,35 @@
+# Training Arguments to HF Trainer Config
+_target_: transformers.TrainingArguments
+run_name: "debug run"
+     
+num_train_epochs: 10
+per_device_train_batch_size: 8 # 8 by default
+per_device_eval_batch_size: 8 # 8 by default
+use_cpu: False
+seed: 42
+evaluation_strategy: epoch # no, steps, epoch
+
+#optimizer
+optim: "adamw_torch"
+learning_rate: 1e-3
+warmup_steps: 10
+lr_scheduler_type: "linear"
+
+
+# performance
+bf16: True
+fp16: False
+gradient_checkpointing: False
+torch_compile: False 
+
+# checkpoint
+output_dir: "debug_training" # directory where checkpoints are stored
+save_strategy: "epoch" # no, epoch, steps
+save_steps: 1
+save_total_limit: 1 # total limit for the number of checkpoints
+save_safetensors: True
+  
+# logging
+report_to: "wandb"
+include_tokens_per_second: True
+logging_strategy: "epoch"

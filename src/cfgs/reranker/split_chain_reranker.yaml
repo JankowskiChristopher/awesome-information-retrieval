@@ -1,0 +1,14 @@
+# Description: Configuration file for the SplitChainReranker model.
+# First the results of the retriever are split into two parts.
+# 10 passages remain unchanged and last 30 passages are reranked using EmbeddingReranker.
+# The results are then merged and reranked using the LLMReranker.
+
+_target_: src.rerankers.chain_reranker.ChainReranker
+
+reranker_type: "hybrid"
+reranker_config:
+  SplitReranker:
+    config_path: "src/cfgs/reranker/bge_split_reranker.yaml"
+  LLMReranker:
+    config_path: "src/cfgs/reranker/llm_reranker.yaml"
+    top_k: 10

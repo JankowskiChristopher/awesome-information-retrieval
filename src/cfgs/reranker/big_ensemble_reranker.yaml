@@ -1,0 +1,9 @@
+_target_: src.rerankers.chain_reranker.ChainReranker
+reranker_type: "hybrid"
+
+reranker_config:
+  SplitReranker:
+    config_path: "src/cfgs/reranker/small_ensemble_split_reranker.yaml"
+  LLMReranker:
+    config_path: "src/cfgs/reranker/llm_reranker.yaml"
+    top_k: 10

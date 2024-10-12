@@ -1,0 +1,6 @@
+_target_: src.retrievers.bm25_retriever.BM25Retriever
+num_workers: 2
+batch_size_retrieval: 1
+should_use_cached_results: true
+should_cache_results: true
+should_override_cache_with_less_docs: false

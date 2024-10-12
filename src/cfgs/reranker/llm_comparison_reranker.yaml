@@ -1,0 +1,3 @@
+_target_: src.rerankers.llm_comparison_reranker.LLMComparisonReranker
+top_k: null # by default take the max of metrics or set manually
+generator_config_path: "src/cfgs/generator/mistral.yaml"

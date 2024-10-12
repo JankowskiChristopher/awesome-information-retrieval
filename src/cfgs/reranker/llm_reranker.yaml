@@ -1,0 +1,2 @@
+_target_: src.rerankers.llm_reranker.LLMReranker
+top_k: null # by default take the max of metrics or set manually

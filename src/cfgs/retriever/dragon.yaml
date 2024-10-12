@@ -1,0 +1,15 @@
+_target_: src.retrievers.embedding_retriever.EmbeddingRetriever
+model_identifier: "facebook/dragon-plus-context-encoder"
+tokenizer_path_or_name: "facebook/dragon-plus-query-encoder"
+context_embedding_model_path_or_name: "facebook/dragon-plus-context-encoder"
+query_embedding_model_path_or_name: "facebook/dragon-plus-query-encoder"
+batch_size_passages: 16  # change depending on the GPU, later introduce "automatic"
+batch_size_queries: 256
+batch_size_retrieval: 1000
+query_instruction: null
+context_instruction: null
+local: false
+embedding_column: "embeddings"
+should_use_cached_results: true
+should_cache_results: true
+should_override_cache_with_less_docs: false

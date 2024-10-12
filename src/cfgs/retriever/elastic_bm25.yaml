@@ -1,0 +1,15 @@
+_target_: src.retrievers.elastic_search_bm25_retriever.ElasticSearchBM25Retriever
+hostname: localhost
+language: english
+timeout: 100
+retry_on_timeout: true
+maxsize: 24
+num_workers: 1  # Keep this low to avoid overloading the Elasticsearch server
+number_of_shards: default 
+should_initialize: True
+sleep_for_refresh: 3
+sleep_for_reconnect: 20
+batch_size_retrieval: 128
+should_use_cached_results: true
+should_cache_results: true
+should_override_cache_with_less_docs: false

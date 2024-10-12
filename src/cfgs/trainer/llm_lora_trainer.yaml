@@ -1,0 +1,16 @@
+_target_: src.trainers.llm_lora_trainer.LLMLoraTrainer
+train_dataset: ???
+eval_dataset: ???
+local: ???
+training_args: ??? 
+tokenizer_name: "mistralai/Mistral-7B-Instruct-v0.2"
+model_name: "test_mistral_small" #"mistralai/Mistral-7B-Instruct-v0.2" 
+lora_cfg: {
+  "r": 30, 
+  "lora_alpha" : 16, 
+  "bias": "none",
+  "task_type": "CAUSAL_LM",
+  "target_modules": ["q_proj", "k_proj", "v_proj"]}
+
+
+

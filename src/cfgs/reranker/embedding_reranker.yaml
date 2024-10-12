@@ -1,0 +1,7 @@
+_target_: src.rerankers.embedding_reranker.EmbeddingReranker
+model_name: "BAAI/bge-reranker-large"
+tokenizer_name: "BAAI/bge-reranker-large"
+device: ${device}
+local: ${local}
+top_k: null # by default take the max of metrics or set manually
+batch_size: 14 # is automatic in the code

@@ -1,0 +1,18 @@
+_target_: src.rerankers.split_reranker.SplitReranker
+
+top_k: 20
+reranker_type: "hybrid"
+
+reranker_config:
+  splits: [] # no splits as we are dealing with an ensemble retriever
+  EmbeddingRetrieverEmbeddingReranker:
+    config_path: "src/cfgs/reranker/bge_split_reranker.yaml"
+    top_k: 16
+  ClassicalRetrieverEmbeddingReranker:
+    config_path: "src/cfgs/reranker/embedding_reranker.yaml"
+    top_k: 4
+    batch_size: 8 # for 40 passages, but is automatic
+    device: "cuda"
+    local: false
+#    config_path: "src/cfgs/reranker/bge_split_reranker.yaml"
+#    top_k: 5

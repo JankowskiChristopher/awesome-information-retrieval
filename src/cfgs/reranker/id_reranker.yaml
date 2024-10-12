@@ -1,0 +1,2 @@
+_target_: src.rerankers.identity_reranker.IdentityReranker
+top_k: null

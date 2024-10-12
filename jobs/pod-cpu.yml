@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  # Pod name
+  name: ${JOB_NAME}
+spec:
+  priorityClassName: none
+  securityContext:
+    fsGroup: 65533
+  containers:
+    # Here go all containers that run within this pod
+    - name: ${CONTAINER_NAME}
+      # Required docker image
+      image: mgrot/awesome-information-retrieval:latest
+      # Here you can put your command
+      # Currently pod will enter infinite sleep loop:
+      command: 
+        - "/bin/bash"
+      args: 
+        - -c  
+        - | 
+           export WANDB_API_KEY=${WANDB_API_KEY} &&
+           export WANDB_NAME=${WANDB_PROJECT_NAME} &&
+           export WANDB_NOTES=${WANDB_NOTES} &&
+           export PYTHONUSERBASE=/tmp/packages && 
+           export HF_HOME=/repo/hf/misc &&
+           export HF_DATASETS_CACHE=/repo/hf/datasets &&
+           export TRANSFORMERS_CACHE=/repo/hf/models &&
+           export PYTHONPATH=$PYTHONPATH:/repo/awesome-information-retrieval &&
+           export DSP_CACHEDIR=/tmp/dsp_cache && 
+           mkdir -p /tmp/.config/wandb && 
+           cd /repo/awesome-information-retrieval && 
+           echo 'started pod'; while :; do sleep 3600; done
+      # This security context is required in every pod to pass K8s security checks
+      securityContext:
+        # Set to your container user's UID and GID
+        runAsUser: 65533
+        runAsGroup: 65533 
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+        seccompProfile:
+          type: RuntimeDefault
+      volumeMounts:
+        # Mount for persistent storage, will be available at /nas
+        - name: nas
+          mountPath: "/nas"
+        - name: repo
+          mountPath: "/repo"
+  imagePullSecrets:
+    - name: regcred
+  initContainers:
+    - name: git-sync
+      image: registry.k8s.io/git-sync/git-sync:v4.1.0
+      args:
+        - "--repo=git@github.com:JankowskiChristopher/awesome-information-retrieval"
+        - "--one-time"
+        - "--root=/repo"
+        - "--ref=${GIT_BRANCH}"
+      volumeMounts:
+        - name: repo
+          mountPath: "/repo"
+        - name: git-secret
+          mountPath: "/etc/git-secret"
+          readOnly: true
+      securityContext:
+        # Set to your container user's UID and GID
+        runAsUser: 65533
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+        seccompProfile:
+          type: RuntimeDefault
+  volumes:
+    - name: nas
+      persistentVolumeClaim:
+        claimName: nas
+    - name: repo 
+      emptyDir: {}
+    - name: git-secret 
+      secret:
+        secretName: git-creds
+        defaultMode: 0400
+

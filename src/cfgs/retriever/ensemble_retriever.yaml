@@ -1,0 +1,3 @@
+type: "ensemble_retriever"
+configs_paths: ["src/cfgs/retriever/arctic.yaml", "src/cfgs/retriever/dragon.yaml", "src/cfgs/retriever/elastic_bm25.yaml"] # Order is very important
+nums_of_retrieved_passages: [40, 20, 20] # len must match the number of retrievers in the ensemble.

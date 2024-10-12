@@ -1,0 +1,44 @@
+defaults:
+  - _self_
+  - reranker: null # embedding_reranker or llm_reranker or (check more hybrid variants)
+  - generator: mistral # mistral
+  - retriever: dragon # dragon
+  - trainer: llm_lora_trainer
+  - training_args: training_args
+  - evaluator: base_evaluator
+  - override hydra/hydra_logging: disabled # do not change
+  - override hydra/job_logging: custom # do not change
+
+# misc
+task: "retrieval" # qa_eval, retrieval or train
+local: false  # true for debugging, else uses /nas
+device: "cuda" # cuda or cpu
+
+# retriever
+metrics_k_values: [3, 10]
+beir_datasets_names: null  # null if whole BEIR, else list of dataset names
+num_retrieved_passages: 20 # retrieve more than max(k_metrics) for reranking later
+
+# wandb
+wandb_project_name: ${oc.env:WANDB_NAME}
+wandb_entity: ${oc.env:WANDB_ENTITY}
+wandb_group: ${oc.env:WANDB_GROUP}
+run_name: "debug-mistral-small"
+track: true
+
+# generator
+dataset_names: null # null if whole evaluation suite, else string or list of dataset names (to be checked) e.g. wikiqa
+metric_names: null # null if all available metrics
+zero_shot: true # whether to answer with provided context
+
+
+# Training 
+train_dataset: "wikiqa"
+eval_dataset: "truthfulqa"
+resume_from_checkpoint: False
+checkpoint_dir: "storage/training/checkpoint-370"
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .

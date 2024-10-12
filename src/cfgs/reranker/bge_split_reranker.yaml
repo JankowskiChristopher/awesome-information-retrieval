@@ -1,0 +1,28 @@
+# Description:
+
+# SplitReranker consists of required field "splits" and lists of rerankers.
+# If splits is an empty list, it means that we iterate over list of retriever results and apply each reranker to each
+# result dict. Otherwise we assume the results are merged into a list with one element.
+
+# Passages are split depending on splits - splits mean how many passages go to each reranker
+# top_k in reranker means how many passages are returned by each reranker
+
+# ChainReranker consists only of a list of rerankers. Rerankers are applied in order and form a pipeline.
+
+# It is possible to nest rerankers, e.g. SplitReranker with ChainReranker inside.
+# Single rerankers are instantiated based on the passed config path and arguments are overridden by this config.
+_target_: src.rerankers.split_reranker.SplitReranker
+top_k: 16
+reranker_type: "hybrid"
+
+
+reranker_config:
+  splits: [10]
+  IdReranker:
+    config_path: "src/cfgs/reranker/id_reranker.yaml"
+    top_k: 10
+  EmbeddingReranker:
+    config_path: "src/cfgs/reranker/embedding_reranker.yaml"
+    top_k: 6
+    device: "cuda"
+    local: false

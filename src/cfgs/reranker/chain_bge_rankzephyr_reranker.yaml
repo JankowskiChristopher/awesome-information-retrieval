@@ -1,0 +1,24 @@
+# Description:
+# Config expects one root reranker e.g. SplitReranker or ChainReranker
+
+# SplitReranker consists of required field "splits" and lists of rerankers.
+# Passages are split depending on splits - splits mean how many passages go to each reranker
+# top_k in reranker means how many passages are returned by each reranker
+
+# ChainReranker consists only of a list of rerankers. Rerankers are applied in order and form a pipeline.
+
+# It is possible to nest rerankers, e.g. SplitReranker with ChainReranker inside.
+# Single rerankers are instantiated based on the passed config path and arguments are overridden by this config.
+
+_target_: src.rerankers.chain_reranker.ChainReranker
+reranker_type: "hybrid"
+
+reranker_config:
+  EmbeddingReranker:
+    config_path: "src/cfgs/reranker/embedding_reranker.yaml"
+    top_k: 20
+    device: "cuda"
+    local: false
+  LLMReranker:
+    config_path: "src/cfgs/reranker/llm_reranker.yaml"
+    top_k: 10
