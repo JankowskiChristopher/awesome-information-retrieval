@@ -5,6 +5,8 @@
 </p>
 
 Created by: [Krzysztof Jankowski](https://github.com/jankowskichristopher), Michał Janik, Michał Grotkowski, Antoni Hanke
+The research was presented at the Data Science Summit ML Edition 2024 and earlier parts at ML in PL 2024 and Warsaw.ai episode XX.
+
 ### About
 The repository contains code developed for experimentation with information retrieval and question answering systems.
 By combining various retrievers, rerankers and other techniques we conduct an in depth analysis on how to achieve the most performant pipelines.
