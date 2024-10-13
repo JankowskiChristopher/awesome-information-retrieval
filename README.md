@@ -1,6 +1,6 @@
 # Awesome Information Retrieval
-
 <p align="left">
+<a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
@@ -10,14 +10,15 @@ The repository contains code developed for experimentation with information retr
 By combining various retrievers, rerankers and other techniques we conduct an in depth analysis on how to achieve the most performant pipelines.
 The repository uses the following models:
 Retrievers:
-- BM25
-- Dragon
-- Snowflake Arctic-embed
+- [BM25](https://pypi.org/project/rank-bm25/) and ElasticSearch BM25
+- [Dragon](https://huggingface.co/facebook/dragon-plus-context-encoder)
+- [Snowflake Arctic-embed-m](https://huggingface.co/Snowflake/snowflake-arctic-embed-m)
 
 Rerankers:
-- BGE-reranker
-- Rank Zephyr
+- [BGE-reranker-large](https://huggingface.co/BAAI/bge-reranker-large)
+- [Rank Zephyr](https://huggingface.co/castorini/rank_zephyr_7b_v1_full)
 - Own reranker - Mistral 7B with special prompt to compare question with 2 passages
+- Hybrid rerankers: flexible code to combine rerankers into pipelines or split the retrievers results into several rerankers
 
 Other models can be easily integrated through Hydra configs.
 
