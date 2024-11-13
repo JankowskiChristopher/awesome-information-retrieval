@@ -4,7 +4,7 @@
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
-Created by: [Krzysztof Jankowski](https://github.com/jankowskichristopher), [Michał Janik](https://github.com/mihal09), [Michał Grotkowski](https://github.com/mgrotkowski), Antoni Hanke
+Created by: [Krzysztof Jankowski](https://github.com/jankowskichristopher), [Michał Janik](https://github.com/mihal09), [Michał Grotkowski](https://github.com/mgrotkowski), [Antoni Hanke](https://github.com/AntekHanke).
 The research was presented at the Data Science Summit ML Edition 2024 and earlier parts at ML in PL 2024 and Warsaw.ai episode XX.
 
 ### About
